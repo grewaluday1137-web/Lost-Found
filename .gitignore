@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/venv/
+backend/.pytest_cache/
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Environment variables
+.env
+backend/.env
+frontend/.env.local
+
+# Node & Next.js
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+.npm
+*.log
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+info_extracted.txt
