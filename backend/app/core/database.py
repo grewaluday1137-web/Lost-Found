@@ -1,30 +1,73 @@
 import logging
+from pymongo.errors import ServerSelectionTimeoutError
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 class MongoDB:
-    client: AsyncIOMotorClient = None
+    client = None
     db: AsyncIOMotorDatabase = None
+    is_mock: bool = False
 
 db_instance = MongoDB()
 
 async def connect_to_mongo():
-    logger.info("Connecting to MongoDB at: %s", settings.MONGODB_URI)
+    uri = settings.MONGODB_URI.strip()
+    logger.info("Configured MONGODB_URI: %s", uri if "@" not in uri else uri.split("@")[-1])
+
+    if uri.lower() == "mock":
+        try:
+            from mongomock_motor import AsyncMongoMockClient
+            logger.info("🚀 Using In-Memory Mock MongoDB (development mode).")
+            db_instance.client = AsyncMongoMockClient()
+            db_instance.db = db_instance.client[settings.DATABASE_NAME]
+            db_instance.is_mock = True
+            await init_db_indexes()
+            return
+        except ImportError:
+            logger.warning("mongomock_motor is not installed. Falling back to standard motor client.")
+
     try:
-        db_instance.client = AsyncIOMotorClient(
-            settings.MONGODB_URI,
-            serverSelectionTimeoutMS=5000
+        client = AsyncIOMotorClient(
+            uri,
+            serverSelectionTimeoutMS=3000
         )
-        db_instance.db = db_instance.client[settings.DATABASE_NAME]
-        logger.info("Successfully connected to database '%s'", settings.DATABASE_NAME)
+        # Ping server to verify connection immediately
+        await client.admin.command('ping')
+        db_instance.client = client
+        db_instance.db = client[settings.DATABASE_NAME]
+        db_instance.is_mock = False
+        logger.info("✅ Successfully connected to MongoDB database '%s'", settings.DATABASE_NAME)
         await init_db_indexes()
     except Exception as e:
-        logger.warning("Could not immediately connect to MongoDB (%s). The server will start, but database operations may fail until the database is available.", e)
+        logger.warning(
+            "\n" + "=" * 70 + "\n"
+            "⚠️  COULD NOT CONNECT TO MONGODB:\n"
+            "   %s\n\n"
+            "👉 TO FIX THIS:\n"
+            "   1. If using MongoDB Atlas:\n"
+            "      Add your connection string to 'backend/.env':\n"
+            "      MONGODB_URI=\"mongodb+srv://<user>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority\"\n\n"
+            "   2. If you want to test right now with zero setup:\n"
+            "      Set in 'backend/.env':\n"
+            "      MONGODB_URI=\"mock\"\n"
+            + "=" * 70 + "\n",
+            e
+        )
+        # Attempt fallback to in-memory mock if localhost failed
+        try:
+            from mongomock_motor import AsyncMongoMockClient
+            logger.info("ℹ️ Automatically activating In-Memory Mock MongoDB so server remains functional.")
+            db_instance.client = AsyncMongoMockClient()
+            db_instance.db = db_instance.client[settings.DATABASE_NAME]
+            db_instance.is_mock = True
+            await init_db_indexes()
+        except Exception:
+            pass
 
 async def close_mongo_connection():
-    if db_instance.client is not None:
+    if db_instance.client is not None and not db_instance.is_mock:
         logger.info("Closing MongoDB connection...")
         db_instance.client.close()
         logger.info("MongoDB connection closed.")
@@ -34,7 +77,7 @@ async def get_database() -> AsyncIOMotorDatabase:
 
 async def init_db_indexes():
     """Initializes performance and uniqueness indexes for all collections."""
-    if db_instance.db is None:
+    if db_instance.db is None or db_instance.is_mock:
         return
     try:
         # Users indexes
@@ -46,13 +89,6 @@ async def init_db_indexes():
         await db_instance.db.reports.create_index("category")
         await db_instance.db.reports.create_index("user_id")
         await db_instance.db.reports.create_index("created_at")
-        # Text search index
-        await db_instance.db.reports.create_index([
-            ("item_name", "text"),
-            ("description", "text"),
-            ("brand", "text"),
-            ("location", "text")
-        ])
 
         # Claims indexes
         await db_instance.db.claims.create_index([("found_report_id", 1), ("claimant_id", 1)])
