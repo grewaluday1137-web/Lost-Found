@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import api from "@/lib/api";
 import { 
-  QrCode, Camera, CheckCircle2, AlertCircle, ShieldCheck, 
-  ArrowRight, RefreshCw, Key 
+  Camera, CheckCircle2, AlertCircle, ShieldCheck, 
+  ArrowRight, Key 
 } from "lucide-react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
@@ -88,28 +88,28 @@ export default function AdminHandoverPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div className="bg-slate-900/75 p-6 sm:p-8 rounded-3xl border border-slate-800/80 shadow-2xl backdrop-blur-xl space-y-6">
+      <div className="bg-white/90 dark:bg-slate-900/75 p-6 sm:p-8 rounded-3xl border border-slate-200/90 dark:border-slate-800/80 shadow-md dark:shadow-2xl backdrop-blur-xl space-y-6">
         <div>
-          <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
             Collection Desk Handover
           </span>
-          <h1 className="text-2xl font-extrabold text-white mt-1">
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
             QR Collection Verification
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Scan the claimant&apos;s phone screen using your webcam/camera or manually enter the 32-character token.
           </p>
         </div>
 
         {/* Camera Toggle */}
-        <div className="p-4 bg-slate-950/60 rounded-2xl border border-slate-800 flex items-center justify-between">
+        <div className="p-4 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <Camera className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xs font-bold text-white">Webcam Scanner</h2>
-              <p className="text-[11px] text-slate-400">Scan QR code using device camera</p>
+              <h2 className="text-xs font-bold text-slate-900 dark:text-white">Webcam Scanner</h2>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Scan QR code using device camera</p>
             </div>
           </div>
           <button
@@ -122,14 +122,14 @@ export default function AdminHandoverPage() {
 
         {/* Video reader container */}
         {scannerActive && (
-          <div className="overflow-hidden rounded-2xl border border-slate-700 bg-black">
+          <div className="overflow-hidden rounded-2xl border border-slate-300 dark:border-slate-700 bg-black">
             <div id="qr-reader" className="w-full text-white" />
           </div>
         )}
 
         {/* Manual Token input */}
         <form onSubmit={handleManualSubmit} className="space-y-3">
-          <label className="block text-xs font-semibold text-slate-300">
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
             Manual Token Entry (or Scanned Output)
           </label>
           <div className="flex gap-2">
@@ -139,72 +139,73 @@ export default function AdminHandoverPage() {
                 type="text"
                 value={tokenInput}
                 onChange={(e) => setTokenInput(e.target.value)}
-                placeholder="Paste or enter 32+ character verification token..."
-                className="w-full pl-10 pr-4 py-3 bg-slate-950/80 rounded-xl border border-slate-700/80 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                placeholder="Enter 32-character secure alphanumeric token..."
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950/80 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 font-mono focus:outline-none focus:border-blue-500"
               />
             </div>
             <button
               type="submit"
-              disabled={verifying}
-              className="px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all shrink-0 disabled:opacity-50"
+              disabled={verifying || !tokenInput.trim()}
+              className="px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-md disabled:opacity-50 transition-colors shrink-0"
             >
-              {verifying ? "Checking..." : "Verify Token"}
+              {verifying ? "Verifying..." : "Verify Token"}
             </button>
           </div>
         </form>
 
+        {/* Success complete notification */}
+        {completeSuccess && (
+          <div className="p-4 bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 rounded-2xl flex items-center gap-3 text-emerald-800 dark:text-emerald-300">
+            <CheckCircle2 className="w-6 h-6 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <div>
+              <h3 className="font-bold text-xs">Handover Officially Recorded!</h3>
+              <p className="text-[11px] text-emerald-700 dark:text-emerald-300/80">
+                The single-use QR token was consumed, the item status set to &apos;returned&apos;, and audit trail recorded.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Error notification */}
         {error && (
-          <div className="p-4 bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs rounded-2xl flex items-center gap-2">
+          <div className="p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 rounded-2xl flex items-center gap-3 text-rose-700 dark:text-rose-300 text-xs">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        {completeSuccess && (
-          <div className="p-6 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-center space-y-2">
-            <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
-            <h3 className="text-base font-bold text-white">Handover Successfully Completed!</h3>
-            <p className="text-xs text-slate-400">
-              The item has been marked as Returned, the claim is completed, and the token has been permanently retired.
-            </p>
-          </div>
-        )}
-
-        {/* Verification Success Result Card */}
+        {/* Verification result details */}
         {verificationResult && (
-          <div className="p-6 bg-emerald-950/40 border-2 border-emerald-500 rounded-3xl space-y-4 animate-in fade-in">
-            <div className="flex items-center justify-between">
-              <span className="px-2.5 py-1 bg-emerald-500 text-slate-950 font-bold text-xs rounded-lg uppercase tracking-wider flex items-center gap-1 shadow-md">
-                <ShieldCheck className="w-4 h-4" /> Valid QR Token
-              </span>
-              <span className="text-xs text-emerald-300 font-semibold">Ready for Physical Release</span>
+          <div className="p-6 bg-slate-50 dark:bg-slate-950/70 rounded-3xl border border-emerald-300 dark:border-emerald-500/40 space-y-4 animate-in fade-in">
+            <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-sm">
+              <ShieldCheck className="w-5 h-5" /> Token Validated — Ready for Item Release
             </div>
 
-            <div className="bg-slate-950/80 p-4 rounded-2xl border border-emerald-500/30 space-y-2 text-xs">
-              <h3 className="font-bold text-base text-white">
-                {verificationResult.item_name}
-              </h3>
-              <p className="text-slate-400">Category: {verificationResult.category}</p>
-
-              <div className="pt-2 border-t border-slate-800 space-y-1">
-                <p>
-                  <strong className="text-slate-300">Distinctive Marks verified:</strong> {verificationResult.distinctive_marks}
-                </p>
-                {verificationResult.secret_contents && (
-                  <p>
-                    <strong className="text-slate-300">Secret Contents:</strong> {verificationResult.secret_contents}
-                  </p>
-                )}
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Item to Release</span>
+                <p className="font-extrabold text-slate-900 dark:text-white text-sm mt-0.5">{verificationResult.item_name}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-[11px]">Category: {verificationResult.category}</p>
               </div>
+
+              <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                <span className="text-slate-400 dark:text-slate-500 block text-[10px] uppercase font-bold">Verified Claimant</span>
+                <p className="font-extrabold text-slate-900 dark:text-white text-sm mt-0.5">{verificationResult.claimant_name}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-[11px]">ID: {verificationResult.claimant_campus_id || "Registered User"}</p>
+              </div>
+            </div>
+
+            <div className="p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-xl text-[11px] text-amber-800 dark:text-amber-300">
+              Check physical photo ID of the claimant matches <strong>{verificationResult.claimant_name}</strong> before handing over property.
             </div>
 
             <button
               onClick={handleConfirmHandover}
               disabled={completing}
-              className="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-emerald-600/30 transition-all hover:scale-101 flex items-center justify-center gap-2"
             >
-              <CheckCircle2 className="w-5 h-5" />
-              {completing ? "Confirming Handover..." : "Confirm Physical Handover to Claimant"}
+              <CheckCircle2 className="w-4 h-4" />
+              {completing ? "Recording Handover..." : "Confirm Physical Handover & Retire QR Pass"}
             </button>
           </div>
         )}
