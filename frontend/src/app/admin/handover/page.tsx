@@ -60,9 +60,7 @@ export default function AdminHandoverPage() {
           scanner.clear();
           setScannerActive(false);
         },
-        () => {
-          // ignore scan frame errors
-        }
+        () => {}
       );
 
       scannerRef.current = scanner;
@@ -90,33 +88,33 @@ export default function AdminHandoverPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-xs space-y-6">
+      <div className="bg-slate-900/75 p-6 sm:p-8 rounded-3xl border border-slate-800/80 shadow-2xl backdrop-blur-xl space-y-6">
         <div>
-          <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">
+          <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
             Collection Desk Handover
           </span>
-          <h1 className="text-2xl font-bold text-gray-900 mt-1">
+          <h1 className="text-2xl font-extrabold text-white mt-1">
             QR Collection Verification
           </h1>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-slate-400 mt-1">
             Scan the claimant&apos;s phone screen using your webcam/camera or manually enter the 32-character token.
           </p>
         </div>
 
         {/* Camera Toggle */}
-        <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
+        <div className="p-4 bg-slate-950/60 rounded-2xl border border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
               <Camera className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xs font-bold text-gray-900">Webcam Scanner</h2>
-              <p className="text-[11px] text-gray-500">Scan QR code using device camera</p>
+              <h2 className="text-xs font-bold text-white">Webcam Scanner</h2>
+              <p className="text-[11px] text-slate-400">Scan QR code using device camera</p>
             </div>
           </div>
           <button
             onClick={() => setScannerActive(!scannerActive)}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-xs transition-colors"
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition-colors"
           >
             {scannerActive ? "Stop Camera" : "Start Camera"}
           </button>
@@ -124,31 +122,31 @@ export default function AdminHandoverPage() {
 
         {/* Video reader container */}
         {scannerActive && (
-          <div className="overflow-hidden rounded-2xl border border-gray-200">
-            <div id="qr-reader" className="w-full" />
+          <div className="overflow-hidden rounded-2xl border border-slate-700 bg-black">
+            <div id="qr-reader" className="w-full text-white" />
           </div>
         )}
 
         {/* Manual Token input */}
         <form onSubmit={handleManualSubmit} className="space-y-3">
-          <label className="block text-xs font-semibold text-gray-700">
+          <label className="block text-xs font-semibold text-slate-300">
             Manual Token Entry (or Scanned Output)
           </label>
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Key className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
+              <Key className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 value={tokenInput}
                 onChange={(e) => setTokenInput(e.target.value)}
                 placeholder="Paste or enter 32+ character verification token..."
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 rounded-xl border border-gray-200 text-xs font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-3 bg-slate-950/80 rounded-xl border border-slate-700/80 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
               />
             </div>
             <button
               type="submit"
               disabled={verifying}
-              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-xs transition-colors shrink-0 disabled:opacity-50"
+              className="px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all shrink-0 disabled:opacity-50"
             >
               {verifying ? "Checking..." : "Verify Token"}
             </button>
@@ -156,17 +154,17 @@ export default function AdminHandoverPage() {
         </form>
 
         {error && (
-          <div className="p-4 bg-red-50 border border-red-200 text-red-700 text-xs rounded-2xl flex items-center gap-2">
+          <div className="p-4 bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs rounded-2xl flex items-center gap-2">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {completeSuccess && (
-          <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-2">
-            <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
-            <h3 className="text-base font-bold text-gray-900">Handover Successfully Completed!</h3>
-            <p className="text-xs text-gray-600">
+          <div className="p-6 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-center space-y-2">
+            <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
+            <h3 className="text-base font-bold text-white">Handover Successfully Completed!</h3>
+            <p className="text-xs text-slate-400">
               The item has been marked as Returned, the claim is completed, and the token has been permanently retired.
             </p>
           </div>
@@ -174,27 +172,27 @@ export default function AdminHandoverPage() {
 
         {/* Verification Success Result Card */}
         {verificationResult && (
-          <div className="p-6 bg-emerald-50/70 border-2 border-emerald-500 rounded-3xl space-y-4 animate-in fade-in">
+          <div className="p-6 bg-emerald-950/40 border-2 border-emerald-500 rounded-3xl space-y-4 animate-in fade-in">
             <div className="flex items-center justify-between">
-              <span className="px-2.5 py-1 bg-emerald-600 text-white font-bold text-xs rounded-lg uppercase tracking-wider flex items-center gap-1">
+              <span className="px-2.5 py-1 bg-emerald-500 text-slate-950 font-bold text-xs rounded-lg uppercase tracking-wider flex items-center gap-1 shadow-md">
                 <ShieldCheck className="w-4 h-4" /> Valid QR Token
               </span>
-              <span className="text-xs text-emerald-800 font-medium">Ready for Physical Release</span>
+              <span className="text-xs text-emerald-300 font-semibold">Ready for Physical Release</span>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl border border-emerald-100 space-y-2 text-xs">
-              <h3 className="font-bold text-base text-gray-900">
+            <div className="bg-slate-950/80 p-4 rounded-2xl border border-emerald-500/30 space-y-2 text-xs">
+              <h3 className="font-bold text-base text-white">
                 {verificationResult.item_name}
               </h3>
-              <p className="text-gray-500">Category: {verificationResult.category}</p>
+              <p className="text-slate-400">Category: {verificationResult.category}</p>
 
-              <div className="pt-2 border-t border-gray-100 space-y-1">
+              <div className="pt-2 border-t border-slate-800 space-y-1">
                 <p>
-                  <strong>Distinctive Marks verified:</strong> {verificationResult.distinctive_marks}
+                  <strong className="text-slate-300">Distinctive Marks verified:</strong> {verificationResult.distinctive_marks}
                 </p>
                 {verificationResult.secret_contents && (
                   <p>
-                    <strong>Secret Contents:</strong> {verificationResult.secret_contents}
+                    <strong className="text-slate-300">Secret Contents:</strong> {verificationResult.secret_contents}
                   </p>
                 )}
               </div>
@@ -203,7 +201,7 @@ export default function AdminHandoverPage() {
             <button
               onClick={handleConfirmHandover}
               disabled={completing}
-              className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <CheckCircle2 className="w-5 h-5" />
               {completing ? "Confirming Handover..." : "Confirm Physical Handover to Claimant"}

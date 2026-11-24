@@ -55,23 +55,23 @@ export default function AdminClaimsPage() {
   return (
     <div className="space-y-6">
       {/* Header and status tabs */}
-      <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-slate-900/75 p-5 rounded-2xl border border-slate-800/80 shadow-md backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Claim Verification Queue</h2>
-          <p className="text-xs text-gray-500">
+          <h2 className="text-lg font-bold text-white">Claim Verification Queue</h2>
+          <p className="text-xs text-slate-400">
             Compare private evidence submitted by claimants with the physical found item.
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto">
           {["submitted", "under_review", "approved", "completed"].map((st) => (
             <button
               key={st}
               onClick={() => setFilterStatus(st)}
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors ${
+              className={`px-3 py-1.5 text-xs font-bold rounded-xl uppercase tracking-wider transition-all shrink-0 ${
                 filterStatus === st
-                  ? "bg-amber-600 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-amber-500 text-slate-950 shadow-sm"
+                  : "bg-slate-950/60 text-slate-400 hover:text-white border border-slate-800"
               }`}
             >
               {st.replace("_", " ")}
@@ -84,82 +84,82 @@ export default function AdminClaimsPage() {
       {loading ? (
         <div className="space-y-3">
           {[1, 2].map((n) => (
-            <div key={n} className="h-44 bg-gray-100 rounded-2xl animate-pulse" />
+            <div key={n} className="h-44 bg-slate-900/40 border border-slate-800 rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : claims.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-3xl border border-gray-100">
-          <ShieldCheck className="w-10 h-10 text-emerald-500 mx-auto mb-2" />
-          <h3 className="font-bold text-gray-800 text-base">No Claims in &apos;{filterStatus}&apos;</h3>
-          <p className="text-xs text-gray-500 mt-1">
+        <div className="text-center py-20 bg-slate-900/40 rounded-3xl border border-slate-800/80 backdrop-blur-md space-y-2">
+          <ShieldCheck className="w-10 h-10 text-emerald-400 mx-auto" />
+          <h3 className="font-bold text-white text-base">No Claims in &apos;{filterStatus}&apos;</h3>
+          <p className="text-xs text-slate-400">
             Check other tabs or wait for campus claimants to file evidence.
           </p>
         </div>
       ) : (
         <div className="space-y-4">
           {claims.map((c) => (
-            <div key={c._id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-xs space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
+            <div key={c._id} className="bg-slate-900/70 p-6 rounded-2xl border border-slate-800/80 shadow-md space-y-4 backdrop-blur-md">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
                 <div>
-                  <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">
+                  <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">
                     Claim against found report:
                   </span>
-                  <h3 className="font-bold text-lg text-gray-900">{c.report?.item_name || "Found Item"}</h3>
-                  <p className="text-xs text-gray-500">
+                  <h3 className="font-bold text-lg text-white">{c.report?.item_name || "Found Item"}</h3>
+                  <p className="text-xs text-slate-400">
                     Category: {c.report?.category} {c.report?.custody_location && `• Custody: ${c.report.custody_location}`}
                   </p>
                 </div>
 
                 <div className="text-right text-xs">
-                  <span className="px-2.5 py-1 bg-amber-100 text-amber-800 font-bold rounded-md uppercase text-[10px]">
+                  <span className="px-2.5 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold rounded-lg uppercase text-[10px]">
                     {c.status.replace("_", " ")}
                   </span>
-                  <p className="text-gray-400 mt-1">{new Date(c.created_at).toLocaleString()}</p>
+                  <p className="text-slate-500 mt-1">{new Date(c.created_at).toLocaleString()}</p>
                 </div>
               </div>
 
               {/* Claimant info & Private Evidence */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 {/* Claimant Identity */}
-                <div className="p-4 bg-blue-50/50 rounded-xl space-y-1.5 border border-blue-100">
-                  <span className="font-bold text-blue-900 flex items-center gap-1">
+                <div className="p-4 bg-slate-950/60 rounded-xl space-y-1.5 border border-slate-800">
+                  <span className="font-bold text-blue-400 flex items-center gap-1">
                     <User className="w-3.5 h-3.5" /> Claimant Identity
                   </span>
-                  <p><strong>Name:</strong> {c.claimant?.name || "Anonymous"}</p>
-                  <p><strong>Email:</strong> {c.claimant?.email}</p>
-                  {c.claimant?.campus_id && <p><strong>Campus ID:</strong> {c.claimant.campus_id}</p>}
-                  {c.claimant?.phone && <p><strong>Phone:</strong> {c.claimant.phone}</p>}
+                  <p><strong className="text-slate-400">Name:</strong> {c.claimant?.name || "Anonymous"}</p>
+                  <p><strong className="text-slate-400">Email:</strong> {c.claimant?.email}</p>
+                  {c.claimant?.campus_id && <p><strong className="text-slate-400">Campus ID:</strong> {c.claimant.campus_id}</p>}
+                  {c.claimant?.phone && <p><strong className="text-slate-400">Phone:</strong> {c.claimant.phone}</p>}
                 </div>
 
                 {/* Evidence Answers */}
-                <div className="p-4 bg-gray-50 rounded-xl space-y-2 border border-gray-100">
-                  <span className="font-bold text-gray-900">Non-Public Evidence Answers</span>
+                <div className="p-4 bg-slate-950/60 rounded-xl space-y-2 border border-slate-800">
+                  <span className="font-bold text-slate-200">Non-Public Evidence Answers</span>
                   <div>
-                    <strong className="text-gray-600 block">Distinctive Marks / Serial:</strong>
-                    <p className="text-gray-900 font-medium">{c.distinctive_marks}</p>
+                    <strong className="text-slate-400 block">Distinctive Marks / Serial:</strong>
+                    <p className="text-white font-medium">{c.distinctive_marks}</p>
                   </div>
                   {c.secret_contents && (
                     <div>
-                      <strong className="text-gray-600 block">Secret Contents:</strong>
-                      <p className="text-gray-900 font-medium">{c.secret_contents}</p>
+                      <strong className="text-slate-400 block">Secret Contents:</strong>
+                      <p className="text-white font-medium">{c.secret_contents}</p>
                     </div>
                   )}
                   <div>
-                    <strong className="text-gray-600 block">Circumstances of Loss:</strong>
-                    <p className="text-gray-900 font-medium">{c.loss_circumstances}</p>
+                    <strong className="text-slate-400 block">Circumstances of Loss:</strong>
+                    <p className="text-white font-medium">{c.loss_circumstances}</p>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
               {(c.status === "submitted" || c.status === "under_review") && (
-                <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100 justify-end">
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-800 justify-end">
                   <button
                     onClick={() => {
                       setSelectedClaim(c);
                       setActionType("request_info");
                     }}
-                    className="py-2 px-3.5 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold rounded-xl border border-amber-200"
+                    className="py-2 px-3.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs font-bold rounded-xl border border-amber-500/30"
                   >
                     Request More Info
                   </button>
@@ -168,7 +168,7 @@ export default function AdminClaimsPage() {
                       setSelectedClaim(c);
                       setActionType("reject");
                     }}
-                    className="py-2 px-3.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold rounded-xl border border-red-200"
+                    className="py-2 px-3.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 text-xs font-bold rounded-xl border border-rose-500/30"
                   >
                     Reject Claim
                   </button>
@@ -177,7 +177,7 @@ export default function AdminClaimsPage() {
                       setSelectedClaim(c);
                       setActionType("approve");
                     }}
-                    className="py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs"
+                    className="py-2 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/30"
                   >
                     Approve Ownership & Issue QR
                   </button>
@@ -190,9 +190,9 @@ export default function AdminClaimsPage() {
 
       {/* Decision Modal */}
       {selectedClaim && actionType && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white max-w-md w-full rounded-3xl p-6 shadow-xl space-y-4">
-            <h3 className="font-bold text-base text-gray-900 capitalize">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900 max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-700/80 space-y-4">
+            <h3 className="font-bold text-base text-white capitalize">
               {actionType === "approve"
                 ? "Approve Claim & Issue Collection QR"
                 : actionType === "reject"
@@ -200,7 +200,7 @@ export default function AdminClaimsPage() {
                 : "Request Additional Information"}
             </h3>
 
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-slate-400 leading-relaxed">
               {actionType === "approve"
                 ? "Approving this claim will mint a secure, single-use, 48-hour QR token for the student to collect their property."
                 : actionType === "reject"
@@ -219,7 +219,7 @@ export default function AdminClaimsPage() {
                     ? "Optional notes regarding evidence satisfaction..."
                     : "Enter reason or instructions for claimant..."
                 }
-                className="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 bg-slate-950/80 rounded-xl border border-slate-700/80 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
               />
 
               <div className="flex gap-2">
@@ -229,19 +229,19 @@ export default function AdminClaimsPage() {
                     setSelectedClaim(null);
                     setActionType(null);
                   }}
-                  className="flex-1 py-2 text-xs font-semibold bg-gray-100 rounded-xl"
+                  className="flex-1 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className={`flex-1 py-2 text-xs font-semibold text-white rounded-xl ${
+                  className={`flex-1 py-2 text-xs font-bold text-white rounded-xl shadow-md ${
                     actionType === "approve"
-                      ? "bg-emerald-600 hover:bg-emerald-700"
+                      ? "bg-emerald-600 hover:bg-emerald-500"
                       : actionType === "reject"
-                      ? "bg-red-600 hover:bg-red-700"
-                      : "bg-amber-600 hover:bg-amber-700"
+                      ? "bg-rose-600 hover:bg-rose-500"
+                      : "bg-amber-600 hover:bg-amber-500"
                   }`}
                 >
                   {submitting ? "Processing..." : "Confirm Decision"}
