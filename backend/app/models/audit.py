@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 class AuditLogEntry(BaseModel):
     id: Optional[str] = Field(default=None, alias="_id")
@@ -12,6 +12,4 @@ class AuditLogEntry(BaseModel):
     reason: Optional[str] = None
     metadata: Dict[str, Any] = {}
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)

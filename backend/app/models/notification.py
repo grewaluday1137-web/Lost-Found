@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 class NotificationType(str):
     REPORT_APPROVED = "report_approved"
@@ -22,6 +22,4 @@ class NotificationResponse(BaseModel):
     link: Optional[str] = None
     is_read: bool = False
     created_at: datetime
-
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)

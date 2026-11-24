@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 class ClaimStatus(str, Enum):
     SUBMITTED = "submitted"
@@ -32,9 +32,7 @@ class ClaimResponse(BaseModel):
     admin_notes: Optional[str] = None
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 class ClaimDecision(BaseModel):
     action: str = Field(..., description="'approve', 'reject', or 'request_info'")

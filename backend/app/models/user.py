@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 class UserRole(str, Enum):
     REGULAR = "regular"
@@ -31,9 +31,7 @@ class UserResponse(UserBase):
     status: UserStatus
     created_at: datetime
     updated_at: datetime
-
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 class UserInDB(UserBase):
     id: Optional[str] = Field(default=None, alias="_id")
@@ -42,9 +40,7 @@ class UserInDB(UserBase):
     status: UserStatus = UserStatus.ACTIVE
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 class Token(BaseModel):
     access_token: str

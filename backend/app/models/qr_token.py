@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 class TokenStatus(str, Enum):
     ACTIVE = "active"
@@ -21,9 +21,7 @@ class VerificationTokenInDB(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     redeemed_at: Optional[datetime] = None
     redeemed_by_admin_id: Optional[str] = None
-
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 class QRVerificationRequest(BaseModel):
     token: str

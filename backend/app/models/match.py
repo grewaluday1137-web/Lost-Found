@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 class MatchStatus(str, Enum):
     SUGGESTED = "suggested"
@@ -16,6 +16,4 @@ class MatchCandidate(BaseModel):
     factors: Dict[str, float] = {}
     status: MatchStatus = MatchStatus.SUGGESTED
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
